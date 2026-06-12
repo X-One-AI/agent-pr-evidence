@@ -6,7 +6,7 @@ Generate reviewable safety evidence for AI-agent-generated pull requests.
 
 ## Status
 
-`P1` - v0.3.0 release candidate.
+`P1` - v0.3.0 released.
 
 ## Purpose
 
