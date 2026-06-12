@@ -3,7 +3,7 @@
 ## Intake
 
 - Priority: P1
-- Status: v0.3.0 release candidate with local CLI, GitHub Action, config profiles, schema versioning, and baseline review gates
+- Status: v0.3.0 released with local CLI, GitHub Action, config profiles, schema versioning, and baseline review gates
 - Positioning: Generate reviewable safety evidence for AI-agent-generated pull requests.
 - Primary route: Product -> Architecture -> Expert/Security -> QA -> Implementation -> Completion readiness
 

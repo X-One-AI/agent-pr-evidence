@@ -15,15 +15,18 @@ def test_readmes_and_opt_foundation_stay_aligned():
     manifest = Path("MANIFEST.in").read_text(encoding="utf-8")
 
     assert "agent-pr-evidence collect" in english
+    assert "v0.3.0 released" in english
     assert "uses: X-One-AI/agent-pr-evidence@v0.3.0" in english
     assert "agent-pr-evidence gate" in english
     assert ".agent-pr-evidence.yml" in english
     assert "profile: strict" in english
     assert "agent-pr-evidence collect" in chinese
+    assert "v0.3.0 已发布" in chinese
     assert "uses: X-One-AI/agent-pr-evidence@v0.3.0" in chinese
     assert "agent-pr-evidence gate" in chinese
     assert ".agent-pr-evidence.yml" in chinese
     assert "local-first" in foundation
+    assert "v0.3.0 released" in foundation
     assert "GitHub Action" in foundation
     assert "schema version" in foundation
     assert "baseline" in foundation
