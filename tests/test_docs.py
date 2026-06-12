@@ -20,6 +20,7 @@ def test_readmes_and_opt_foundation_stay_aligned():
     assert "not a demo" in production
     assert "read-only by default" in production
     assert "Delete Or Weaken" in skill
+    assert "fetch-depth: 0" in ci
     assert "base_ref=\"$(git rev-parse HEAD^)\"" in ci
     assert 'version = "0.1.0"' in pyproject
     assert "## 0.1.0" in changelog
