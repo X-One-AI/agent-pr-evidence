@@ -6,7 +6,7 @@ Generate reviewable safety evidence for AI-agent-generated pull requests.
 
 ## Status
 
-`P1` - v0.2.0 release candidate.
+`P1` - v0.3.0 release candidate.
 
 ## Purpose
 
@@ -34,6 +34,8 @@ agent-pr-evidence collect --base origin/main --head HEAD --format markdown
 agent-pr-evidence collect --base origin/main --head HEAD --format json --output pr-evidence.json
 agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
 agent-pr-evidence collect --base origin/main --head HEAD --config .agent-pr-evidence.yml --profile strict
+agent-pr-evidence baseline --base origin/main --head HEAD --output agent-pr-evidence-baseline.json
+agent-pr-evidence gate --base origin/main --head HEAD --baseline agent-pr-evidence-baseline.json --profile strict
 ```
 
 The first production surface is local-first. It does not need GitHub App permissions and does not upload repository data.
@@ -56,6 +58,17 @@ Profiles:
 
 Reports include `schema_version: agent-pr-evidence.report.v1` so downstream workflow steps can check compatibility before consuming JSON.
 
+## Baseline Gate
+
+Use a baseline when adopting the tool in an existing repository. The baseline records known risk flags, then `gate` fails only when a PR introduces new risk flags that are not already accepted.
+
+```bash
+agent-pr-evidence baseline --base origin/main --head HEAD --output agent-pr-evidence-baseline.json
+agent-pr-evidence gate --base origin/main --head HEAD --baseline agent-pr-evidence-baseline.json --profile strict
+```
+
+Baseline files use `schema_version: agent-pr-evidence.baseline.v1`.
+
 ## GitHub Action
 
 Use the Action after `actions/checkout` with enough history for the base/head diff:
@@ -76,15 +89,16 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.2.0
+      - uses: X-One-AI/agent-pr-evidence@v0.3.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           output: agent-pr-evidence.md
           profile: strict
+          baseline: agent-pr-evidence-baseline.json
 ```
 
-The Action writes the report to `GITHUB_STEP_SUMMARY` and exposes `report-path` plus `summary-json` outputs. It does not request write permissions or post PR comments by default.
+The Action writes the report to `GITHUB_STEP_SUMMARY` and exposes `report-path`, `summary-json`, `gate-failed`, and `new-risk-flags` outputs. It does not request write permissions or post PR comments by default.
 
 ## Required Evidence
 
@@ -118,6 +132,7 @@ Inputs that require user or real-world data are recorded in `../x-one-skipped-in
 
 - [Changelog](./CHANGELOG.md)
 - [Example Config](./examples/agent-pr-evidence.yml)
+- [Example Baseline](./examples/baseline.json)
 - [Product Foundation](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [Production Constraints](./ops/constraints/production.md)

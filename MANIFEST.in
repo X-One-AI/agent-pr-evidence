@@ -4,4 +4,5 @@ include action.yml
 include scripts/run-action.py
 recursive-include docs *.md
 recursive-include examples *.yml
+recursive-include examples *.json
 recursive-include ops *.md

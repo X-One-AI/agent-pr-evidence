@@ -91,4 +91,4 @@ def test_package_module_entrypoint_outputs_version():
         stdout=subprocess.PIPE,
     )
 
-    assert result.stdout.strip() == "agent-pr-evidence 0.2.0"
+    assert result.stdout.strip() == "agent-pr-evidence 0.3.0"

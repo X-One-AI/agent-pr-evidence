@@ -6,7 +6,7 @@
 
 ## 状态
 
-`P1` - v0.2.0 release candidate。
+`P1` - v0.3.0 release candidate。
 
 ## 目的
 
@@ -34,6 +34,8 @@ agent-pr-evidence collect --base origin/main --head HEAD --format markdown
 agent-pr-evidence collect --base origin/main --head HEAD --format json --output pr-evidence.json
 agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
 agent-pr-evidence collect --base origin/main --head HEAD --config .agent-pr-evidence.yml --profile strict
+agent-pr-evidence baseline --base origin/main --head HEAD --output agent-pr-evidence-baseline.json
+agent-pr-evidence gate --base origin/main --head HEAD --baseline agent-pr-evidence-baseline.json --profile strict
 ```
 
 第一生产化表面是 local-first。它不需要 GitHub App 权限，也不会上传仓库数据。
@@ -56,6 +58,17 @@ Profiles：
 
 报告会包含 `schema_version: agent-pr-evidence.report.v1`，方便后续 workflow 在消费 JSON 前检查兼容性。
 
+## Baseline Gate
+
+在已有仓库接入时，可以先生成 baseline。baseline 记录已知风险项，之后 `gate` 只在 PR 引入 baseline 之外的新风险时失败，降低接入噪音。
+
+```bash
+agent-pr-evidence baseline --base origin/main --head HEAD --output agent-pr-evidence-baseline.json
+agent-pr-evidence gate --base origin/main --head HEAD --baseline agent-pr-evidence-baseline.json --profile strict
+```
+
+Baseline 文件使用 `schema_version: agent-pr-evidence.baseline.v1`。
+
 ## GitHub Action
 
 在 `actions/checkout` 之后使用，并确保 checkout 有足够历史用于 base/head diff：
@@ -76,15 +89,16 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.2.0
+      - uses: X-One-AI/agent-pr-evidence@v0.3.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           output: agent-pr-evidence.md
           profile: strict
+          baseline: agent-pr-evidence-baseline.json
 ```
 
-Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `summary-json` outputs。默认不申请写权限，也不自动发布 PR comment。
+Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path`、`summary-json`、`gate-failed` 和 `new-risk-flags` outputs。默认不申请写权限，也不自动发布 PR comment。
 
 ## 必要证据
 
@@ -118,6 +132,7 @@ Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `s
 
 - [Changelog](./CHANGELOG.md)
 - [示例配置](./examples/agent-pr-evidence.yml)
+- [示例 Baseline](./examples/baseline.json)
 - [产品基础](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [生产约束](./ops/constraints/production.md)

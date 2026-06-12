@@ -28,6 +28,10 @@ inputs:
     description: Optional profile override, either default or strict.
     required: false
     default: ""
+  baseline:
+    description: Optional baseline JSON file. When set, the Action fails on new risk flags.
+    required: false
+    default: ""
   test-logs:
     description: Optional newline- or comma-separated test log paths to include.
     required: false
@@ -40,6 +44,12 @@ outputs:
   summary-json:
     description: Compact JSON summary for downstream workflow steps.
     value: ${{ steps.collect.outputs.summary-json }}
+  gate-failed:
+    description: Whether baseline gate found new risk flags.
+    value: ${{ steps.collect.outputs.gate-failed }}
+  new-risk-flags:
+    description: Comma-separated risk flags not present in the baseline.
+    value: ${{ steps.collect.outputs.new-risk-flags }}
 
 runs:
   using: composite
@@ -59,4 +69,5 @@ runs:
         --output "${{ inputs.output }}"
         --config "${{ inputs.config }}"
         --profile "${{ inputs.profile }}"
+        --baseline "${{ inputs.baseline }}"
         --test-logs "${{ inputs.test-logs }}"
