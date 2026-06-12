@@ -43,10 +43,10 @@ jobs:
 
       - name: Run action runner smoke check
         run: |
-          git fetch origin feat/opt-foundation:refs/remotes/origin/feat/opt-foundation
+          base_ref="$(git rev-parse HEAD^)"
           python scripts/run-action.py \
             --repo . \
-            --base origin/feat/opt-foundation \
+            --base "$base_ref" \
             --head HEAD \
             --format markdown \
             --output /tmp/agent-pr-evidence.md

@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@feat/local-pr-evidence-cli
+      - uses: X-One-AI/agent-pr-evidence@v0.1.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
@@ -96,6 +96,7 @@ Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `s
 
 ## 文档
 
+- [Changelog](./CHANGELOG.md)
 - [产品基础](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [生产约束](./ops/constraints/production.md)

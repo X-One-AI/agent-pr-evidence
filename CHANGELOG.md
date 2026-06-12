@@ -1,0 +1,12 @@
+# Changelog
+
+## 0.1.0
+
+Initial early-production release.
+
+- Add local CLI: `agent-pr-evidence collect`.
+- Generate Markdown and JSON PR evidence from git base/head diffs.
+- Detect CI/workflow, dependency, infra, auth/policy, and secret-like changes.
+- Redact secret-like values from test log evidence.
+- Add read-only GitHub Action support that writes `GITHUB_STEP_SUMMARY` and outputs.
+- Add English and Simplified Chinese README entry points.

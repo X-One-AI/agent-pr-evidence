@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@feat/local-pr-evidence-cli
+      - uses: X-One-AI/agent-pr-evidence@v0.1.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
@@ -96,6 +96,7 @@ Inputs that require user or real-world data are recorded in `../x-one-skipped-in
 
 ## Docs
 
+- [Changelog](./CHANGELOG.md)
 - [Product Foundation](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [Production Constraints](./ops/constraints/production.md)
