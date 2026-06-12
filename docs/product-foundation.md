@@ -3,7 +3,7 @@
 ## Intake
 
 - Priority: P1
-- Status: early production local CLI and GitHub Action
+- Status: v0.2.0 release candidate with local CLI, GitHub Action, config profiles, and report schema versioning
 - Positioning: Generate reviewable safety evidence for AI-agent-generated pull requests.
 - Primary route: Product -> Architecture -> Expert/Security -> QA -> Implementation -> Completion readiness
 
@@ -39,6 +39,8 @@ Move Safe Agent Operations from config scanning into PR review and CI evidence.
 - The first production surface is local-first or review-first, not a hosted dashboard by default.
 - Reports, packets, indexes, or labs must be redaction-safe by design.
 - Every risky claim links to evidence, rule logic, or an explicit limitation.
+- JSON reports expose a schema version so CI consumers can check compatibility.
+- Teams can start with a quiet default profile and opt into stricter review gates.
 
 ## Architecture Brief
 
@@ -73,10 +75,11 @@ input evidence -> normalize -> redact -> evaluate -> render reviewable artifact
 2. Produce Markdown and JSON evidence from deterministic git diff data.
 3. Accept optional test logs and redact secret-like values before rendering.
 4. Ship a read-only GitHub Action that writes PR evidence to `GITHUB_STEP_SUMMARY`.
-5. Defer GitHub App permissions and PR comment posting until the skipped inputs are resolved.
-6. Use feature branches named `feat/<scope>` or `docs/<scope>`.
-7. Use Conventional/Angular commits such as `feat: add packet schema` or `docs: clarify deferred scope`.
-8. Never push directly to `main`; open a pull request from the feature branch.
+5. Support `.agent-pr-evidence.yml` with schema versioning, profiles, and disabled risk flags.
+6. Defer GitHub App permissions and PR comment posting until the skipped inputs are resolved.
+7. Use feature branches named `feat/<scope>` or `docs/<scope>`.
+8. Use Conventional/Angular commits such as `feat: add packet schema` or `docs: clarify deferred scope`.
+9. Never push directly to `main`; open a pull request from the feature branch.
 
 ## Skipped Inputs
 

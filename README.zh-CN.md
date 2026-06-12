@@ -6,7 +6,7 @@
 
 ## 状态
 
-`P1` - early production 本地 CLI。
+`P1` - v0.2.0 release candidate。
 
 ## 目的
 
@@ -33,9 +33,28 @@ agent-pr-evidence --version
 agent-pr-evidence collect --base origin/main --head HEAD --format markdown
 agent-pr-evidence collect --base origin/main --head HEAD --format json --output pr-evidence.json
 agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
+agent-pr-evidence collect --base origin/main --head HEAD --config .agent-pr-evidence.yml --profile strict
 ```
 
 第一生产化表面是 local-first。它不需要 GitHub App 权限，也不会上传仓库数据。
+
+## 配置
+
+`agent-pr-evidence` 会自动读取仓库根目录的 `.agent-pr-evidence.yml`。可以用 `--config` 指向其他文件，也可以用 `--profile` 覆盖单次运行的 profile。
+
+```yaml
+schema_version: 1
+profile: strict
+disabled_risk_flags:
+  - dependency-change
+```
+
+Profiles：
+
+- `default`：低噪音 review evidence，适合刚开始接入的团队。
+- `strict`：如果没有提供测试日志，会增加 `missing-test-evidence` 风险项。
+
+报告会包含 `schema_version: agent-pr-evidence.report.v1`，方便后续 workflow 在消费 JSON 前检查兼容性。
 
 ## GitHub Action
 
@@ -57,11 +76,12 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.1.0
+      - uses: X-One-AI/agent-pr-evidence@v0.2.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           output: agent-pr-evidence.md
+          profile: strict
 ```
 
 Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `summary-json` outputs。默认不申请写权限，也不自动发布 PR comment。
@@ -97,6 +117,7 @@ Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `s
 ## 文档
 
 - [Changelog](./CHANGELOG.md)
+- [示例配置](./examples/agent-pr-evidence.yml)
 - [产品基础](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [生产约束](./ops/constraints/production.md)

@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from agent_pr_evidence.collector import collect_evidence
+from agent_pr_evidence.config import load_config, resolve_config_path
 from agent_pr_evidence.renderers import render_json, render_markdown
 
 
@@ -17,6 +18,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--head", required=True, help="head git ref")
     parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
     parser.add_argument("--output", default="agent-pr-evidence.md", help="report output path")
+    parser.add_argument("--config", help="optional .agent-pr-evidence.yml config file")
+    parser.add_argument("--profile", help="override config profile")
     parser.add_argument("--test-log", action="append", default=[], help="test log file; repeatable")
     parser.add_argument("--test-logs", default="", help="newline- or comma-separated test log paths")
     return parser
@@ -29,7 +32,9 @@ def main(argv: list[str] | None = None) -> int:
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    report = collect_evidence(repo=Path(args.repo), base=args.base, head=args.head, test_logs=test_logs)
+    repo = Path(args.repo)
+    config = load_config(resolve_config_path(repo, args.config), args.profile)
+    report = collect_evidence(repo=repo, base=args.base, head=args.head, test_logs=test_logs, config=config)
     rendered = render_json(report) if args.format == "json" else render_markdown(report)
     output_path.write_text(rendered, encoding="utf-8")
     _append_step_summary(rendered)
@@ -40,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "changed_files": report.summary.changed_files,
                     "risk_flags": report.risk_flags,
+                    "schema_version": report.schema_version,
                     "test_status": report.summary.test_status,
                 },
                 separators=(",", ":"),

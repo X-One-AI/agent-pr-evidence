@@ -67,7 +67,37 @@ def test_action_runner_writes_summary_report_and_outputs(tmp_path):
     assert summary == {
         "changed_files": 4,
         "risk_flags": ["ci-or-workflow-change", "dependency-change", "secret-like-content"],
+        "schema_version": "agent-pr-evidence.report.v1",
         "test_status": "passed",
     }
     assert "sk-action-secret" not in result.stdout
     assert "sk-action-secret" not in report_path.read_text(encoding="utf-8")
+
+
+def test_action_runner_accepts_empty_optional_config_inputs(tmp_path):
+    repo, base, head = _sample_repo(tmp_path)
+    report_path = tmp_path / "evidence.md"
+
+    subprocess.run(
+        [
+            sys.executable,
+            "scripts/run-action.py",
+            "--repo",
+            str(repo),
+            "--base",
+            base,
+            "--head",
+            head,
+            "--output",
+            str(report_path),
+            "--config",
+            "",
+            "--profile",
+            "",
+        ],
+        check=True,
+        cwd=Path.cwd(),
+        env=os.environ | {"PYTHONPATH": "src"},
+    )
+
+    assert report_path.exists()

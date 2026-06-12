@@ -6,6 +6,7 @@ from pathlib import Path
 
 from agent_pr_evidence import __version__
 from agent_pr_evidence.collector import collect_evidence
+from agent_pr_evidence.config import load_config, resolve_config_path
 from agent_pr_evidence.renderers import render_json, render_markdown
 
 
@@ -19,6 +20,8 @@ def build_parser() -> argparse.ArgumentParser:
     collect.add_argument("--base", required=True, help="base git ref")
     collect.add_argument("--head", required=True, help="head git ref")
     collect.add_argument("--test-log", action="append", default=[], help="test log file; repeatable")
+    collect.add_argument("--config", help="optional .agent-pr-evidence.yml config file")
+    collect.add_argument("--profile", choices=("default", "strict"), help="override config profile")
     collect.add_argument("--format", choices=("markdown", "json"), default="markdown")
     collect.add_argument("--output", help="write report to file instead of stdout")
     return parser
@@ -40,11 +43,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "collect":
         try:
+            repo = Path(args.repo)
+            config = load_config(resolve_config_path(repo, args.config), args.profile)
             report = collect_evidence(
-                repo=Path(args.repo),
+                repo=repo,
                 base=args.base,
                 head=args.head,
                 test_logs=[Path(path) for path in args.test_log],
+                config=config,
             )
         except Exception as exc:
             print(f"Failed to collect evidence: {exc}", file=sys.stderr)

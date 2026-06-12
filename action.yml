@@ -20,6 +20,14 @@ inputs:
     description: Path where the generated report should be written.
     required: false
     default: agent-pr-evidence.md
+  config:
+    description: Optional .agent-pr-evidence.yml config file.
+    required: false
+    default: ""
+  profile:
+    description: Optional profile override, either default or strict.
+    required: false
+    default: ""
   test-logs:
     description: Optional newline- or comma-separated test log paths to include.
     required: false
@@ -49,4 +57,6 @@ runs:
         --head "${{ inputs.head }}"
         --format "${{ inputs.format }}"
         --output "${{ inputs.output }}"
+        --config "${{ inputs.config }}"
+        --profile "${{ inputs.profile }}"
         --test-logs "${{ inputs.test-logs }}"
