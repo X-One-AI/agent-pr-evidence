@@ -1,0 +1,11 @@
+# Python / local tooling
+__pycache__/
+.pytest_cache/
+.venv/
+dist/
+build/
+*.egg-info/
+
+# Local outputs
+.local/
+*.log
