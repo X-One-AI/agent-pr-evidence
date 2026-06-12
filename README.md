@@ -6,7 +6,7 @@ Generate reviewable safety evidence for AI-agent-generated pull requests.
 
 ## Status
 
-`P1` - reserved production foundation.
+`P1` - early production local CLI.
 
 ## Purpose
 
@@ -14,7 +14,28 @@ Move Safe Agent Operations from config scanning into PR review and CI evidence.
 
 ## First Production Surface
 
-GitHub Action and CLI that produce a Markdown/JSON PR evidence packet.
+Local CLI that produces a Markdown/JSON PR evidence packet from a git base/head diff. GitHub Action and GitHub App surfaces are deferred until the required permissions and real PR samples are available.
+
+## Install
+
+From this repository:
+
+```bash
+python3 -m pip install -e .
+agent-pr-evidence --version
+```
+
+## Usage
+
+Collect local PR evidence from a git diff:
+
+```bash
+agent-pr-evidence collect --base origin/main --head HEAD --format markdown
+agent-pr-evidence collect --base origin/main --head HEAD --format json --output pr-evidence.json
+agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
+```
+
+The first production surface is local-first. It does not need GitHub App permissions and does not upload repository data.
 
 ## Required Evidence
 
