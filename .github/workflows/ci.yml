@@ -40,3 +40,13 @@ jobs:
         run: |
           agent-pr-evidence --version
           python -m agent_pr_evidence --version
+
+      - name: Run action runner smoke check
+        run: |
+          python scripts/run-action.py \
+            --repo . \
+            --base origin/feat/opt-foundation \
+            --head HEAD \
+            --format markdown \
+            --output /tmp/agent-pr-evidence.md
+          test -s /tmp/agent-pr-evidence.md

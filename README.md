@@ -14,7 +14,7 @@ Move Safe Agent Operations from config scanning into PR review and CI evidence.
 
 ## First Production Surface
 
-Local CLI that produces a Markdown/JSON PR evidence packet from a git base/head diff. GitHub Action and GitHub App surfaces are deferred until the required permissions and real PR samples are available.
+Local CLI and GitHub Action that produce a Markdown/JSON PR evidence packet from a git base/head diff. The GitHub App surface is deferred until the required permissions and real PR samples are available.
 
 ## Install
 
@@ -37,6 +37,35 @@ agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
 
 The first production surface is local-first. It does not need GitHub App permissions and does not upload repository data.
 
+## GitHub Action
+
+Use the Action after `actions/checkout` with enough history for the base/head diff:
+
+```yaml
+name: Agent PR Evidence
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: X-One-AI/agent-pr-evidence@feat/local-pr-evidence-cli
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          output: agent-pr-evidence.md
+```
+
+The Action writes the report to `GITHUB_STEP_SUMMARY` and exposes `report-path` plus `summary-json` outputs. It does not request write permissions or post PR comments by default.
+
 ## Required Evidence
 
 - scope summary
@@ -44,6 +73,12 @@ The first production surface is local-first. It does not need GitHub App permiss
 - test evidence
 - dependency and CI/auth/infra changes
 - reviewer checklist
+
+## Current Limits
+
+- PR comments are intentionally not posted by default.
+- GitHub App permissions are still skipped until real review workflows are available.
+- Rule boundaries still need real PR false-positive and false-negative tuning.
 
 ## Non-Goals
 

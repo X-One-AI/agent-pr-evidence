@@ -1,0 +1,52 @@
+name: Agent PR Evidence
+description: Generate reviewable safety evidence for AI-agent-generated pull requests.
+
+inputs:
+  repo:
+    description: Git repository path to inspect.
+    required: false
+    default: "."
+  base:
+    description: Base git ref or SHA for the PR diff.
+    required: true
+  head:
+    description: Head git ref or SHA for the PR diff.
+    required: true
+  format:
+    description: Report format, either markdown or json.
+    required: false
+    default: markdown
+  output:
+    description: Path where the generated report should be written.
+    required: false
+    default: agent-pr-evidence.md
+  test-logs:
+    description: Optional newline- or comma-separated test log paths to include.
+    required: false
+    default: ""
+
+outputs:
+  report-path:
+    description: Path to the generated PR evidence report.
+    value: ${{ steps.collect.outputs.report-path }}
+  summary-json:
+    description: Compact JSON summary for downstream workflow steps.
+    value: ${{ steps.collect.outputs.summary-json }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install agent-pr-evidence
+      shell: bash
+      run: python -m pip install "$GITHUB_ACTION_PATH"
+    - name: Collect PR evidence
+      id: collect
+      shell: bash
+      run: >-
+        python "$GITHUB_ACTION_PATH/scripts/run-action.py"
+        --repo "${{ inputs.repo }}"
+        --base "${{ inputs.base }}"
+        --head "${{ inputs.head }}"
+        --format "${{ inputs.format }}"
+        --output "${{ inputs.output }}"
+        --test-logs "${{ inputs.test-logs }}"

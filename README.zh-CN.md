@@ -14,7 +14,7 @@
 
 ## 第一生产化表面
 
-本地 CLI：基于 git base/head diff 生成 Markdown/JSON PR evidence packet。GitHub Action 和 GitHub App 表面等权限模型和真实 PR 样本明确后再做。
+本地 CLI 和 GitHub Action：基于 git base/head diff 生成 Markdown/JSON PR evidence packet。GitHub App 表面等权限模型和真实 PR 样本明确后再做。
 
 ## 安装
 
@@ -37,6 +37,35 @@ agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
 
 第一生产化表面是 local-first。它不需要 GitHub App 权限，也不会上传仓库数据。
 
+## GitHub Action
+
+在 `actions/checkout` 之后使用，并确保 checkout 有足够历史用于 base/head diff：
+
+```yaml
+name: Agent PR Evidence
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: X-One-AI/agent-pr-evidence@feat/local-pr-evidence-cli
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          output: agent-pr-evidence.md
+```
+
+Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `summary-json` outputs。默认不申请写权限，也不自动发布 PR comment。
+
 ## 必要证据
 
 - 范围摘要
@@ -44,6 +73,12 @@ agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
 - 测试证据
 - 依赖和 CI/auth/infra 变更
 - reviewer checklist
+
+## 当前限制
+
+- 默认不发布 PR comment。
+- GitHub App 权限仍等待真实 review workflow 后再定。
+- 规则边界还需要真实 PR 的误报/漏报调优。
 
 ## 非目标
 
