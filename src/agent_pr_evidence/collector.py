@@ -8,7 +8,33 @@ from agent_pr_evidence.git_adapter import changed_paths, file_at_ref, numstat
 from agent_pr_evidence.model import REPORT_SCHEMA_VERSION, EvidenceReport, EvidenceSummary, FileChange, TestEvidence
 from agent_pr_evidence.redaction import redact
 
-_SECRET_CONTENT = re.compile(r"(?i)(api[_-]?key|token|secret|password)\s*=|sk-[A-Za-z0-9_-]{8,}")
+_SECRET_CONTENT = re.compile(r"(?i)(api[_-]?key|token|secret|password)\s*=\s*([^\s]+)|sk-[A-Za-z0-9_-]{8,}")
+_PLACEHOLDER_SECRET_VALUES = {
+    "<api-key>",
+    "<token>",
+    "<your-api-key>",
+    "<your-token>",
+    "your-api-key",
+    "your-token",
+    "changeme",
+    "example",
+    "placeholder",
+}
+_DEPENDENCY_FILENAMES = {
+    "package.json",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "requirements.txt",
+    "requirements-dev.txt",
+    "pyproject.toml",
+    "poetry.lock",
+    "uv.lock",
+    "go.mod",
+    "go.sum",
+    "Cargo.toml",
+    "Cargo.lock",
+}
 
 
 def collect_evidence(
@@ -58,7 +84,7 @@ def _path_categories(path: str) -> tuple[str, ...]:
     categories: list[str] = []
     if path.startswith(".github/workflows/") or path in {".github/dependabot.yml", ".github/actions.yml"}:
         categories.append("ci-or-workflow-change")
-    if path in {"requirements.txt", "pyproject.toml", "package.json", "package-lock.json", "pnpm-lock.yaml"}:
+    if Path(path).name in _DEPENDENCY_FILENAMES:
         categories.append("dependency-change")
     if any(part in path for part in ("infra", "terraform", "kubernetes", "helm")):
         categories.append("infra-change")
@@ -72,7 +98,12 @@ def _has_secret_like_content(repo: Path, head: str, path: str) -> bool:
         content = file_at_ref(repo, head, path)
     except Exception:
         return False
-    return bool(_SECRET_CONTENT.search(content))
+    for match in _SECRET_CONTENT.finditer(content):
+        value = match.group(2)
+        if value and value.strip().strip("\"'`,.;").lower() in _PLACEHOLDER_SECRET_VALUES:
+            continue
+        return True
+    return False
 
 
 def _test_evidence(path: Path) -> TestEvidence:

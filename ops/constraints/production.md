@@ -7,5 +7,6 @@
 - GitHub Action behavior must stay read-only by default: write `GITHUB_STEP_SUMMARY` and outputs, but do not post PR comments or request write permissions until real workflows justify it.
 - Profiles must be quiet by default and explicit when strict; teams should opt into additional noise such as missing test evidence.
 - Baseline gates must fail only on newly introduced risk flags, not on already accepted repository state.
+- Rule changes must add or update fixture corpus cases for both the intended signal and the closest false-positive boundary.
 - Keep failure modes explicit and documented.
 - Every rule, score, label, or scenario must have evidence or a limitation note.

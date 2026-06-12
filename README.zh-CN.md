@@ -6,7 +6,7 @@
 
 ## 状态
 
-`P1` - v0.3.0 已发布。
+`P1` - v0.4.0 生产硬化中。
 
 ## 目的
 
@@ -69,6 +69,17 @@ agent-pr-evidence gate --base origin/main --head HEAD --baseline agent-pr-eviden
 
 Baseline 文件使用 `schema_version: agent-pr-evidence.baseline.v1`。
 
+## 规则边界
+
+规则由 `tests/fixtures/pr-corpus` 下的版本化 PR fixture corpus 支撑。corpus 覆盖安静变更、误报边界和高信号风险，让规则变更先被审查，再影响真实团队。
+
+当前边界示例：
+
+- 纯文档变更保持安静
+- `<your-api-key>` 这类占位凭据保持安静
+- 看起来像真实 token 的值仍触发 `secret-like-content`
+- 嵌套 package manifest 和 lockfile 会触发 `dependency-change`
+
 ## GitHub Action
 
 在 `actions/checkout` 之后使用，并确保 checkout 有足够历史用于 base/head diff：
@@ -89,7 +100,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.3.0
+      - uses: X-One-AI/agent-pr-evidence@v0.4.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
@@ -112,7 +123,7 @@ Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path`、`sum
 
 - 默认不发布 PR comment。
 - GitHub App 权限仍等待真实 review workflow 后再定。
-- 规则边界还需要真实 PR 的误报/漏报调优。
+- 规则边界还需要在公开 fixture corpus 之外继续接入更多真实 PR 的误报/漏报调优。
 
 ## 非目标
 

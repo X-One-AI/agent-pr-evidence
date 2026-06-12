@@ -1,0 +1,40 @@
+schema_version: 1
+cases:
+  - id: docs-only-change
+    description: Documentation-only PR should stay quiet.
+    base_files:
+      README.md: "# Project\n"
+    head_files:
+      README.md: "# Project\n\nMore usage notes.\n"
+    expected_risk_flags: []
+    expected_sensitive_files: 0
+
+  - id: placeholder-secret-doc
+    description: Placeholder credentials in docs should not be treated as leaked secrets.
+    base_files:
+      README.md: "# Project\n"
+    head_files:
+      docs/setup.md: "Set OPENAI_API_KEY=<your-api-key> before running.\n"
+    expected_risk_flags: []
+    expected_sensitive_files: 0
+
+  - id: real-secret-env
+    description: Real-looking token values should remain high signal.
+    base_files:
+      README.md: "# Project\n"
+    head_files:
+      .env.example: "OPENAI_API_KEY=sk-live-secret-value\n"
+    expected_risk_flags:
+      - secret-like-content
+    expected_sensitive_files: 1
+
+  - id: nested-js-package
+    description: Nested package manifests and lockfiles should count as dependency changes.
+    base_files:
+      README.md: "# Project\n"
+    head_files:
+      apps/web/package.json: "{\"dependencies\":{\"left-pad\":\"1.3.0\"}}\n"
+      apps/web/pnpm-lock.yaml: "lockfileVersion: '9.0'\n"
+    expected_risk_flags:
+      - dependency-change
+    expected_sensitive_files: 2

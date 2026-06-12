@@ -3,7 +3,7 @@
 ## Intake
 
 - Priority: P1
-- Status: v0.3.0 released with local CLI, GitHub Action, config profiles, schema versioning, and baseline review gates
+- Status: v0.4.0 production hardening with local CLI, GitHub Action, config profiles, schema versioning, baseline review gates, and a versioned PR fixture corpus
 - Positioning: Generate reviewable safety evidence for AI-agent-generated pull requests.
 - Primary route: Product -> Architecture -> Expert/Security -> QA -> Implementation -> Completion readiness
 
@@ -42,6 +42,7 @@ Move Safe Agent Operations from config scanning into PR review and CI evidence.
 - JSON reports expose a schema version so CI consumers can check compatibility.
 - Teams can start with a quiet default profile and opt into stricter review gates.
 - Existing repositories can adopt baseline gates so only new risk flags fail CI.
+- Rule changes are backed by positive and negative fixture cases before release.
 
 ## Architecture Brief
 
@@ -62,6 +63,7 @@ input evidence -> normalize -> redact -> evaluate -> render reviewable artifact
 - Overclaiming safety guarantees.
 - Creating generic tooling that weakens the Agentic DevSecOps signal.
 - Accepting real secrets or private user data into fixtures.
+- Letting noisy rules erode reviewer trust before real-world feedback arrives.
 
 ## QA Plan
 
@@ -78,10 +80,11 @@ input evidence -> normalize -> redact -> evaluate -> render reviewable artifact
 4. Ship a read-only GitHub Action that writes PR evidence to `GITHUB_STEP_SUMMARY`.
 5. Support `.agent-pr-evidence.yml` with schema versioning, profiles, and disabled risk flags.
 6. Support baseline review gates for existing-risk adoption.
-7. Defer GitHub App permissions and PR comment posting until the skipped inputs are resolved.
-8. Use feature branches named `feat/<scope>` or `docs/<scope>`.
-9. Use Conventional/Angular commits such as `feat: add packet schema` or `docs: clarify deferred scope`.
-10. Never push directly to `main`; open a pull request from the feature branch.
+7. Maintain a versioned PR fixture corpus for rule-boundary changes.
+8. Defer GitHub App permissions and PR comment posting until the skipped inputs are resolved.
+9. Use feature branches named `feat/<scope>` or `docs/<scope>`.
+10. Use Conventional/Angular commits such as `feat: add packet schema` or `docs: clarify deferred scope`.
+11. Never push directly to `main`; open a pull request from the feature branch.
 
 ## Skipped Inputs
 
