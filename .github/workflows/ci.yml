@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.3
+
+      - name: Verify project foundation
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f README.zh-CN.md
+          test -f AGENTS.md
+          test -f docs/product-foundation.md
+          test -f ops/opt-overlay.md
+          test -f ops/constraints/production.md
+          test -f ops/constraints/main-entry.md
+          test -f ops/skills/evolution.md
+          grep -q "README.zh-CN.md" README.md
+          grep -q "README.md" README.zh-CN.md
+          grep -q "Do not modify OPT" ops/opt-overlay.md
+          grep -q "Work on feature branches only" ops/opt-overlay.md
+          grep -q "not a demo" ops/constraints/production.md
+          grep -q "Delete Or Weaken" ops/skills/evolution.md
