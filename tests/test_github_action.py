@@ -16,6 +16,8 @@ def test_action_contract_is_safe_for_pull_request_evidence():
     assert action["inputs"]["base"]["required"] is True
     assert action["inputs"]["head"]["required"] is True
     assert action["inputs"]["format"]["default"] == "markdown"
+    assert action["inputs"]["baseline"]["required"] is False
+    assert action["outputs"]["gate-failed"]["description"]
     assert action["outputs"]["report-path"]["description"]
     assert action["runs"]["using"] == "composite"
     assert "scripts/run-action.py" in action["runs"]["steps"][-1]["run"]
@@ -72,6 +74,49 @@ def test_action_runner_writes_summary_report_and_outputs(tmp_path):
     }
     assert "sk-action-secret" not in result.stdout
     assert "sk-action-secret" not in report_path.read_text(encoding="utf-8")
+
+
+def test_action_runner_outputs_gate_result_when_baseline_is_provided(tmp_path):
+    repo, base, head = _sample_repo(tmp_path)
+    baseline_path = tmp_path / "baseline.json"
+    report_path = tmp_path / "evidence.md"
+    github_output = tmp_path / "github-output.txt"
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "agent-pr-evidence.baseline.v1",
+                "risk_flags": ["ci-or-workflow-change", "dependency-change", "secret-like-content"],
+                "files": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/run-action.py",
+            "--repo",
+            str(repo),
+            "--base",
+            base,
+            "--head",
+            head,
+            "--output",
+            str(report_path),
+            "--profile",
+            "strict",
+            "--baseline",
+            str(baseline_path),
+        ],
+        cwd=Path.cwd(),
+        env=os.environ | {"PYTHONPATH": "src", "GITHUB_OUTPUT": str(github_output)},
+    )
+
+    assert result.returncode == 1
+    output = github_output.read_text(encoding="utf-8")
+    assert "gate-failed=true" in output
+    assert "new-risk-flags=missing-test-evidence" in output
 
 
 def test_action_runner_accepts_empty_optional_config_inputs(tmp_path):

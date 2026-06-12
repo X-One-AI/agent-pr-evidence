@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+Baseline review gate release.
+
+- Add `agent-pr-evidence baseline` to create review baselines.
+- Add `agent-pr-evidence gate` to fail only on risk flags not present in the baseline.
+- Add baseline schema versioning with `agent-pr-evidence.baseline.v1`.
+- Add GitHub Action `baseline` input plus `gate-failed` and `new-risk-flags` outputs.
+- Add example baseline file.
+
 ## 0.2.0
 
 Configuration and governance release.
