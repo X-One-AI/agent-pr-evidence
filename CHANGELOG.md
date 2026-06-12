@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0
+
+Configuration and governance release.
+
+- Add `.agent-pr-evidence.yml` auto-discovery from the repository root.
+- Add `default` and `strict` profiles.
+- Add `disabled_risk_flags` for team-specific false-positive control.
+- Add report schema versioning with `agent-pr-evidence.report.v1`.
+- Add Action inputs for `config` and `profile`.
+
 ## 0.1.0
 
 Initial early-production release.

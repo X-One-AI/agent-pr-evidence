@@ -3,19 +3,30 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from agent_pr_evidence.config import EvidenceConfig
 from agent_pr_evidence.git_adapter import changed_paths, file_at_ref, numstat
-from agent_pr_evidence.model import EvidenceReport, EvidenceSummary, FileChange, TestEvidence
+from agent_pr_evidence.model import REPORT_SCHEMA_VERSION, EvidenceReport, EvidenceSummary, FileChange, TestEvidence
 from agent_pr_evidence.redaction import redact
 
 _SECRET_CONTENT = re.compile(r"(?i)(api[_-]?key|token|secret|password)\s*=|sk-[A-Za-z0-9_-]{8,}")
 
 
-def collect_evidence(repo: Path, base: str, head: str, test_logs: list[Path]) -> EvidenceReport:
+def collect_evidence(
+    repo: Path,
+    base: str,
+    head: str,
+    test_logs: list[Path],
+    config: EvidenceConfig | None = None,
+) -> EvidenceReport:
+    config = config or EvidenceConfig()
     paths = changed_paths(repo, base, head)
     stats = numstat(repo, base, head)
     files = tuple(_file_change(repo, head, path, status, stats.get(path, (0, 0))) for path, status in paths.items())
     tests = tuple(_test_evidence(path) for path in test_logs)
     risk_flags = sorted({flag for file in files for flag in _risk_flags(file)})
+    if config.require_test_evidence and not tests:
+        risk_flags.append("missing-test-evidence")
+    risk_flags = [flag for flag in risk_flags if flag not in config.disabled_risk_flags]
     checklist = _checklist(risk_flags, tests)
     summary = EvidenceSummary(
         changed_files=len(files),
@@ -25,6 +36,7 @@ def collect_evidence(repo: Path, base: str, head: str, test_logs: list[Path]) ->
         test_status=_combined_test_status(tests),
     )
     return EvidenceReport(
+        schema_version=REPORT_SCHEMA_VERSION,
         base=base,
         head=head,
         summary=summary,

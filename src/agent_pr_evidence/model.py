@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 
 
+REPORT_SCHEMA_VERSION = "agent-pr-evidence.report.v1"
+
+
 @dataclass(frozen=True)
 class FileChange:
     path: str
@@ -30,6 +33,7 @@ class EvidenceSummary:
 
 @dataclass(frozen=True)
 class EvidenceReport:
+    schema_version: str
     base: str
     head: str
     summary: EvidenceSummary

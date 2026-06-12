@@ -6,7 +6,7 @@ Generate reviewable safety evidence for AI-agent-generated pull requests.
 
 ## Status
 
-`P1` - early production local CLI.
+`P1` - v0.2.0 release candidate.
 
 ## Purpose
 
@@ -33,9 +33,28 @@ Collect local PR evidence from a git diff:
 agent-pr-evidence collect --base origin/main --head HEAD --format markdown
 agent-pr-evidence collect --base origin/main --head HEAD --format json --output pr-evidence.json
 agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
+agent-pr-evidence collect --base origin/main --head HEAD --config .agent-pr-evidence.yml --profile strict
 ```
 
 The first production surface is local-first. It does not need GitHub App permissions and does not upload repository data.
+
+## Configuration
+
+`agent-pr-evidence` automatically reads `.agent-pr-evidence.yml` from the repository root. Use `--config` to point at another file, and `--profile` to override the file for a single run.
+
+```yaml
+schema_version: 1
+profile: strict
+disabled_risk_flags:
+  - dependency-change
+```
+
+Profiles:
+
+- `default`: lower-noise review evidence for teams adopting the tool.
+- `strict`: adds `missing-test-evidence` when no test logs are provided.
+
+Reports include `schema_version: agent-pr-evidence.report.v1` so downstream workflow steps can check compatibility before consuming JSON.
 
 ## GitHub Action
 
@@ -57,11 +76,12 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.1.0
+      - uses: X-One-AI/agent-pr-evidence@v0.2.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
           output: agent-pr-evidence.md
+          profile: strict
 ```
 
 The Action writes the report to `GITHUB_STEP_SUMMARY` and exposes `report-path` plus `summary-json` outputs. It does not request write permissions or post PR comments by default.
@@ -97,6 +117,7 @@ Inputs that require user or real-world data are recorded in `../x-one-skipped-in
 ## Docs
 
 - [Changelog](./CHANGELOG.md)
+- [Example Config](./examples/agent-pr-evidence.yml)
 - [Product Foundation](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [Production Constraints](./ops/constraints/production.md)
