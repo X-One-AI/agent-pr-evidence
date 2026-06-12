@@ -3,7 +3,7 @@
 ## Intake
 
 - Priority: P1
-- Status: reserved production foundation
+- Status: early production local CLI and GitHub Action
 - Positioning: Generate reviewable safety evidence for AI-agent-generated pull requests.
 - Primary route: Product -> Architecture -> Expert/Security -> QA -> Implementation -> Completion readiness
 
@@ -69,11 +69,14 @@ input evidence -> normalize -> redact -> evaluate -> render reviewable artifact
 
 ## Implementation Plan
 
-1. Keep this foundation branch small and reviewable.
-2. Add the first executable surface only after the missing inputs are resolved or explicitly skipped.
-3. Use feature branches named `feat/<scope>` or `docs/<scope>`.
-4. Use Conventional/Angular commits such as `feat: add packet schema` or `docs: clarify deferred scope`.
-5. Never push directly to `main`; open a pull request from the feature branch.
+1. Ship a local-first CLI first: `agent-pr-evidence collect --base REF --head REF`.
+2. Produce Markdown and JSON evidence from deterministic git diff data.
+3. Accept optional test logs and redact secret-like values before rendering.
+4. Ship a read-only GitHub Action that writes PR evidence to `GITHUB_STEP_SUMMARY`.
+5. Defer GitHub App permissions and PR comment posting until the skipped inputs are resolved.
+6. Use feature branches named `feat/<scope>` or `docs/<scope>`.
+7. Use Conventional/Angular commits such as `feat: add packet schema` or `docs: clarify deferred scope`.
+8. Never push directly to `main`; open a pull request from the feature branch.
 
 ## Skipped Inputs
 

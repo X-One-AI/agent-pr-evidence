@@ -6,29 +6,85 @@
 
 ## 状态
 
-`P1` - reserved production foundation。
+`P1` - early production 本地 CLI。
 
 ## 目的
 
-Move Safe Agent Operations from config scanning into PR review and CI evidence.
+把 Safe Agent Operations 从配置扫描推进到 PR 审查和 CI 证据链。
 
 ## 第一生产化表面
 
-GitHub Action and CLI that produce a Markdown/JSON PR evidence packet.
+本地 CLI 和 GitHub Action：基于 git base/head diff 生成 Markdown/JSON PR evidence packet。GitHub App 表面等权限模型和真实 PR 样本明确后再做。
+
+## 安装
+
+在本仓库中运行：
+
+```bash
+python3 -m pip install -e .
+agent-pr-evidence --version
+```
+
+## 使用
+
+从 git diff 收集本地 PR evidence：
+
+```bash
+agent-pr-evidence collect --base origin/main --head HEAD --format markdown
+agent-pr-evidence collect --base origin/main --head HEAD --format json --output pr-evidence.json
+agent-pr-evidence collect --base origin/main --head HEAD --test-log pytest.log
+```
+
+第一生产化表面是 local-first。它不需要 GitHub App 权限，也不会上传仓库数据。
+
+## GitHub Action
+
+在 `actions/checkout` 之后使用，并确保 checkout 有足够历史用于 base/head diff：
+
+```yaml
+name: Agent PR Evidence
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: X-One-AI/agent-pr-evidence@v0.1.0
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+          output: agent-pr-evidence.md
+```
+
+Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path` 和 `summary-json` outputs。默认不申请写权限，也不自动发布 PR comment。
 
 ## 必要证据
 
-- scope summary
-- sensitive file changes
-- test evidence
-- dependency and CI/auth/infra changes
+- 范围摘要
+- 敏感文件变更
+- 测试证据
+- 依赖和 CI/auth/infra 变更
 - reviewer checklist
+
+## 当前限制
+
+- 默认不发布 PR comment。
+- GitHub App 权限仍等待真实 review workflow 后再定。
+- 规则边界还需要真实 PR 的误报/漏报调优。
 
 ## 非目标
 
-- not a generic code review bot
-- not an autonomous merge gate
-- not a hosted dashboard in the first version
+- 不做通用 code review bot
+- 不做自动合并 gate
+- 第一版不做 hosted dashboard
 
 ## OPT 运行模型
 
@@ -40,6 +96,7 @@ GitHub Action and CLI that produce a Markdown/JSON PR evidence packet.
 
 ## 文档
 
+- [Changelog](./CHANGELOG.md)
 - [产品基础](./docs/product-foundation.md)
 - [OPT Overlay](./ops/opt-overlay.md)
 - [生产约束](./ops/constraints/production.md)
