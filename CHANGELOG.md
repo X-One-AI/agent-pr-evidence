@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+PR fixture corpus and rule-boundary hardening release.
+
+- Add a versioned PR fixture corpus for positive and negative rule-boundary cases.
+- Reduce false positives for documented placeholder credentials such as `<your-api-key>`.
+- Detect nested dependency manifests and lockfiles, including monorepo package paths.
+- Include fixture corpus files in source distributions so rule changes remain reproducible.
+
 ## 0.3.0
 
 Baseline review gate release.

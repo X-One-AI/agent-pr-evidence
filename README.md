@@ -6,7 +6,7 @@ Generate reviewable safety evidence for AI-agent-generated pull requests.
 
 ## Status
 
-`P1` - v0.3.0 released.
+`P1` - v0.4.0 production hardening.
 
 ## Purpose
 
@@ -69,6 +69,17 @@ agent-pr-evidence gate --base origin/main --head HEAD --baseline agent-pr-eviden
 
 Baseline files use `schema_version: agent-pr-evidence.baseline.v1`.
 
+## Rule Boundaries
+
+Rules are backed by a versioned PR fixture corpus under `tests/fixtures/pr-corpus`. The corpus covers quiet changes, false-positive boundaries, and high-signal risks so rule changes can be reviewed before they affect real teams.
+
+Current boundary examples:
+
+- documentation-only changes stay quiet
+- placeholder credentials such as `<your-api-key>` stay quiet
+- real-looking token values still raise `secret-like-content`
+- nested package manifests and lockfiles raise `dependency-change`
+
 ## GitHub Action
 
 Use the Action after `actions/checkout` with enough history for the base/head diff:
@@ -89,7 +100,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.3.0
+      - uses: X-One-AI/agent-pr-evidence@v0.4.0
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
@@ -112,7 +123,7 @@ The Action writes the report to `GITHUB_STEP_SUMMARY` and exposes `report-path`,
 
 - PR comments are intentionally not posted by default.
 - GitHub App permissions are still skipped until real review workflows are available.
-- Rule boundaries still need real PR false-positive and false-negative tuning.
+- Rule boundaries still need more real PR false-positive and false-negative tuning beyond the public fixture corpus.
 
 ## Non-Goals
 
