@@ -6,7 +6,7 @@
 
 ## 状态
 
-`P1` - v0.4.0 生产硬化中。
+`P1` - v0.4.1 生产硬化中。
 
 ## 目的
 
@@ -114,7 +114,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.4.0
+      - uses: X-One-AI/agent-pr-evidence@v0.4.1
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
