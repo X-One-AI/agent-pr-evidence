@@ -18,14 +18,14 @@ Local CLI and GitHub Action that produce a Markdown/JSON PR evidence packet from
 
 ## Install
 
-From PyPI after publication:
+From PyPI:
 
 ```bash
 python3 -m pip install xone-agent-pr-evidence
 agent-pr-evidence --version
 ```
 
-From Homebrew after tap update:
+From Homebrew:
 
 ```bash
 brew install x-one-ai/tap/agent-pr-evidence
@@ -152,6 +152,8 @@ This project references the shared One Person Team workflow through [ops/opt-ove
 ## Blocked Inputs
 
 Inputs that require user or real-world data are recorded in `../x-one-skipped-inputs.md` and should not block foundation work.
+
+Real-user feedback should be classified as false-positive, false-negative, adapter-request, scenario-request, or catalog-update when it applies; portfolio-level handling is tracked in X-One portfolio health docs.
 
 ## Docs
 
