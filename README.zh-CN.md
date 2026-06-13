@@ -18,6 +18,20 @@
 
 ## 安装
 
+PyPI 发布后安装：
+
+```bash
+python3 -m pip install xone-agent-pr-evidence
+agent-pr-evidence --version
+```
+
+Homebrew tap 更新后安装：
+
+```bash
+brew install x-one-ai/tap/agent-pr-evidence
+agent-pr-evidence --version
+```
+
 在本仓库中运行：
 
 ```bash
@@ -142,6 +156,8 @@ Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path`、`sum
 ## 文档
 
 - [Changelog](./CHANGELOG.md)
+- [Publishing](./docs/publishing.md)
+- [Homebrew Packaging](./docs/homebrew.md)
 - [示例配置](./examples/agent-pr-evidence.yml)
 - [示例 Baseline](./examples/baseline.json)
 - [产品基础](./docs/product-foundation.md)

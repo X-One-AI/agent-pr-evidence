@@ -18,6 +18,20 @@ Local CLI and GitHub Action that produce a Markdown/JSON PR evidence packet from
 
 ## Install
 
+From PyPI after publication:
+
+```bash
+python3 -m pip install xone-agent-pr-evidence
+agent-pr-evidence --version
+```
+
+From Homebrew after tap update:
+
+```bash
+brew install x-one-ai/tap/agent-pr-evidence
+agent-pr-evidence --version
+```
+
 From this repository:
 
 ```bash
@@ -142,6 +156,8 @@ Inputs that require user or real-world data are recorded in `../x-one-skipped-in
 ## Docs
 
 - [Changelog](./CHANGELOG.md)
+- [Publishing](./docs/publishing.md)
+- [Homebrew Packaging](./docs/homebrew.md)
 - [Example Config](./examples/agent-pr-evidence.yml)
 - [Example Baseline](./examples/baseline.json)
 - [Product Foundation](./docs/product-foundation.md)
