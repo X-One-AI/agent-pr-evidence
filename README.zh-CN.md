@@ -18,14 +18,14 @@
 
 ## 安装
 
-PyPI 发布后安装：
+从 PyPI 安装：
 
 ```bash
 python3 -m pip install xone-agent-pr-evidence
 agent-pr-evidence --version
 ```
 
-Homebrew tap 更新后安装：
+从 Homebrew 安装：
 
 ```bash
 brew install x-one-ai/tap/agent-pr-evidence
@@ -152,6 +152,8 @@ Action 会把报告写入 `GITHUB_STEP_SUMMARY`，并暴露 `report-path`、`sum
 ## 暂缺输入
 
 需要用户或真实世界数据补充的内容记录在 `../x-one-skipped-inputs.md`，不阻塞基础建设。
+
+真实用户反馈应在适用时分类为 false-positive、false-negative、adapter-request、scenario-request 或 catalog-update；组合级处理记录在 X-One portfolio health 文档中。
 
 ## 文档
 
