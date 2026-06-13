@@ -3,7 +3,7 @@
 ## Intake
 
 - Priority: P1
-- Status: v0.4.0 production hardening with local CLI, GitHub Action, config profiles, schema versioning, baseline review gates, and a versioned PR fixture corpus
+- Status: v0.4.1 production hardening with local CLI, GitHub Action, config profiles, schema versioning, baseline review gates, and a versioned PR fixture corpus
 - Positioning: Generate reviewable safety evidence for AI-agent-generated pull requests.
 - Primary route: Product -> Architecture -> Expert/Security -> QA -> Implementation -> Completion readiness
 

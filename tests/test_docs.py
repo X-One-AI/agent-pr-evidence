@@ -15,22 +15,22 @@ def test_readmes_and_opt_foundation_stay_aligned():
     manifest = Path("MANIFEST.in").read_text(encoding="utf-8")
 
     assert "agent-pr-evidence collect" in english
-    assert "v0.4.0 production hardening" in english
-    assert "uses: X-One-AI/agent-pr-evidence@v0.4.0" in english
+    assert "v0.4.1 production hardening" in english
+    assert "uses: X-One-AI/agent-pr-evidence@v0.4.1" in english
     assert "agent-pr-evidence gate" in english
     assert "Rule Boundaries" in english
     assert "tests/fixtures/pr-corpus" in english
     assert ".agent-pr-evidence.yml" in english
     assert "profile: strict" in english
     assert "agent-pr-evidence collect" in chinese
-    assert "v0.4.0 生产硬化中" in chinese
-    assert "uses: X-One-AI/agent-pr-evidence@v0.4.0" in chinese
+    assert "v0.4.1 生产硬化中" in chinese
+    assert "uses: X-One-AI/agent-pr-evidence@v0.4.1" in chinese
     assert "agent-pr-evidence gate" in chinese
     assert "规则边界" in chinese
     assert "tests/fixtures/pr-corpus" in chinese
     assert ".agent-pr-evidence.yml" in chinese
     assert "local-first" in foundation
-    assert "v0.4.0 production hardening" in foundation
+    assert "v0.4.1 production hardening" in foundation
     assert "GitHub Action" in foundation
     assert "schema version" in foundation
     assert "baseline" in foundation
@@ -43,8 +43,8 @@ def test_readmes_and_opt_foundation_stay_aligned():
     assert "Delete Or Weaken" in skill
     assert "fetch-depth: 0" in ci
     assert "base_ref=\"$(git rev-parse HEAD^)\"" in ci
-    assert 'version = "0.4.0"' in pyproject
-    assert "## 0.4.0" in changelog
+    assert 'version = "0.4.1"' in pyproject
+    assert "## 0.4.1" in changelog
     assert "fixture corpus" in changelog
     assert "schema_version: 1" in example_config
     assert "profile: strict" in example_config

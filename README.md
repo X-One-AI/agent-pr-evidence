@@ -6,7 +6,7 @@ Generate reviewable safety evidence for AI-agent-generated pull requests.
 
 ## Status
 
-`P1` - v0.4.0 production hardening.
+`P1` - v0.4.1 production hardening.
 
 ## Purpose
 
@@ -114,7 +114,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: X-One-AI/agent-pr-evidence@v0.4.0
+      - uses: X-One-AI/agent-pr-evidence@v0.4.1
         with:
           base: ${{ github.event.pull_request.base.sha }}
           head: ${{ github.event.pull_request.head.sha }}
